@@ -1,3 +1,2 @@
 *.pyc
 database.db
-apps/face/local_settings.py
