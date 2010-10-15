@@ -9,34 +9,44 @@ from helpers import get_cookie_name, redirect_to_auth, get_token
 
 from facebook import GraphAPI
 from face.models import UserSession
-from face.models import Friends 
+from face.models import Friend
 
 
 def index(request):
     code = request.GET.get('code', None)
+    # check if we have a token into session
     token = request.session.get('token', None)
+    got_token =True 
     if token is None:
         if code is None:
+            # we don't have the code and the token
+            # so we must redirect
             return HttpResponse(redirect_to_auth())
         else:
+            # we have the code. Request a token
             token = get_token(code)
-
+            got_token = True
     face = GraphAPI(token)
     profile = face.get_object("me")
     first_name = profile['first_name']
     last_name = profile['last_name']
     uid = profile['id']
-    #us = UserSession(uid=uid, token=token, first_name=first_name, last_name=last_name, enabled=False)
-    #us.save()
-    try:
-        UserSession.objects.filter(uid=uid).update(token=token, first_name=first_name, last_name=last_name, enabled=False)
-    except ObjectDoesNotExist:
-        us = UserSession(uid=uid, token=token, first_name=first_name, last_name=last_name, enabled=False)
-        us.save()
-    request.session['token'] = token
-    return HttpResponse(first_name)
-    # TODO: get token and store into db
-    #return render_to_response('face/base_index.html', {}, 
-    #                       context_instance=RequestContext(request))
+    if got_token:
+        try:
+            # update token if object exists
+            us = UserSession.objects.get(uid=uid)
+            us.token = token
+            us.save()
+        except ObjectDoesNotExist:
+            us = UserSession(
+                    uid=uid, 
+                    token=token, 
+                    first_name=first_name, 
+                    last_name=last_name, 
+                    enabled=False)
+            us.save()
+        request.session['token'] = token
+    return render_to_response('face/base_index.html', {'profile': profile}, 
+                           context_instance=RequestContext(request))
 
 

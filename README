@@ -2,7 +2,7 @@ Installare le django apps
 1) Settare la variabile di ambiente PYTHONPATH in modo che punti 
    alla dir dove vogliamo installarle
    Esempio:
-    export PYTHONPATH=~/django/lib
+    export PYTHONPATH=$PYTHONPATH:~/mysite/lib:~/mysite
 2) Usare easy_install con l'opzione -d
    Esempio:
-    easy_install -d /home/ferama/django/lib django-wikiapp
+    easy_install -d /home/ferama/mysite/lib django-wikiapp

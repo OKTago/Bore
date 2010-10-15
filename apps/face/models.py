@@ -1,5 +1,8 @@
 from django.db import models
 
+from django.db import connection
+from django.db.utils import DatabaseError
+
 # Create your models here.
 
 class UserSession(models.Model):
@@ -11,7 +14,24 @@ class UserSession(models.Model):
 
     def __unicode__(self):
        return self.last_name + " " + self.first_name 
+    
+class Friend(models.Model):
+    user_id = models.CharField(max_length=255)
+    friend_id = models.CharField(max_length=255)
+    
+    @staticmethod
+    def get_nomore():
+        return Friend.objects.raw("SELECT * FROM face_friend WHERE friend_id NOT IN (SELECT friend_id FROM face_friendcompare)")
 
-class Friends(models.Model):
-    user_id = models.ForeignKey('UserSession')
-    friend_id = models.IntegerField()
+
+class FriendCompare(models.Model):
+    user_id = models.CharField(max_length=255)
+    friend_id = models.CharField(max_length=255)
+    
+    @staticmethod
+    def truncate():
+        cursor = connection.cursor()
+        try:
+            cursor.execute("TRUNCATE TABLE face_friendcompare")
+        except DatabaseError:
+            cursor.execute("DELETE FROM face_friendcompare")
