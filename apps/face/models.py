@@ -18,6 +18,7 @@ class UserSession(models.Model):
 class Friend(models.Model):
     user_id = models.CharField(max_length=255)
     friend_id = models.CharField(max_length=255)
+    deleted = models.BooleanField(default=False)
     
     @staticmethod
     def get_nomore():

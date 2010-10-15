@@ -1,5 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-{{profile.first_name}} {{profile.last_name}}
+<div id="profile_name"><h3>{{profile.name}}</h3></div>
+<div id="profile_avatar"><img src="http://graph.facebook.com/{{profile.id}}/picture" /></div>
+<div id="deleted">
+<h4>Friends that removed you from theirs friends list</h4>
+<ul>
+    {% for friend in deleted_friend %}
+    <li>
+        <div class="avatar">
+            <img src="http://graph.facebook.com/{{friend.id}}/picture" />
+        </div>
+        <div class="name">{{friend.name}}</div>
+    </li>
+    {% endfor %}
+</ul>
+</div>
 {% endblock content %}

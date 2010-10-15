@@ -25,13 +25,18 @@ for user in us:
     nomore = Friend.get_nomore()
     for item in nomore: 
         print item.friend_id
-        item.delete()
+        tmp = Friend.objects.get(id=item.id)
+        tmp.deleted = True
+        tmp.save()
+        #item.save()
 
     # sync friends
     for friend in friends:
         try:
-            # update token if object exists
             f = Friend.objects.get(user_id=user.uid, friend_id = friend['id'])
+            tmp = Friend(id=f.id)
+            tmp.deleted=False
+            f.save()
         except ObjectDoesNotExist:
             f = Friend(user_id=user.uid, friend_id = friend['id'])
             f.save()

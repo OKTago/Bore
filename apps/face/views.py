@@ -11,7 +11,6 @@ from facebook import GraphAPI
 from face.models import UserSession
 from face.models import Friend
 
-
 def index(request):
     code = request.GET.get('code', None)
     # check if we have a token into session
@@ -46,7 +45,15 @@ def index(request):
                     enabled=False)
             us.save()
         request.session['token'] = token
-    return render_to_response('face/base_index.html', {'profile': profile}, 
+    data = {}
+    data['profile'] = profile
+    data['deleted_friend'] = []
+    deleted_friend = Friend.objects.filter(deleted=True) 
+    for friend in deleted_friend:
+        friend_id = friend.friend_id
+        friend_profile = face.get_object(friend_id)
+        data['deleted_friend'].append(friend_profile)
+    return render_to_response('face/base_index.html', data, 
                            context_instance=RequestContext(request))
 
 
