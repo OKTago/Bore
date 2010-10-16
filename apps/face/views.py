@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist 
+from django.views.decorators.http import require_POST
 
 from helpers import get_cookie_name, redirect_to_auth, get_token
 
@@ -57,7 +58,7 @@ def index(request):
     return render_to_response('face/base_index.html', data, 
                            context_instance=RequestContext(request))
 
-
+@require_POST
 def remove_exfriend(request, friend_id):
     token = request.session.get('token', None)
     if token is None:
