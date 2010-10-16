@@ -1,7 +1,8 @@
+* {
+    font-family: sans-serif;
+}
 #head {
     height: 30px;
-    border: 1px solid red;
 }
 #container {
-    border: 1px solid green;
 }
