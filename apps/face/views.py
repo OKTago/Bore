@@ -2,6 +2,7 @@
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist 
 
@@ -48,7 +49,7 @@ def index(request):
     data = {}
     data['profile'] = profile
     data['deleted_friend'] = []
-    deleted_friend = Friend.objects.filter(deleted=True) 
+    deleted_friend = Friend.objects.filter(user_id=uid, deleted=True) 
     for friend in deleted_friend:
         friend_id = friend.friend_id
         friend_profile = face.get_object(friend_id)
@@ -58,4 +59,10 @@ def index(request):
 
 
 def remove_exfriend(request, friend_id):
-    pass
+    token = request.session.get('token', None)
+    if token is None:
+        return HttpResponseRedirect("/")
+    
+    f = Friend.objects.get(friend_id=friend_id)
+    f.delete()
+    return HttpResponse(friend_id)

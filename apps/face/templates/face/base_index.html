@@ -4,7 +4,7 @@
 {% block extra_headers %}
     <link href="{{MEDIA_URL}}face/css/face.css" rel="stylesheet" type="text/css" />
     {% dojo_include %}
-    <script type="text/javascript" src="{{MEDIA_URL}}/face/js/face.js"></script>
+    <script type="text/javascript" src="{{MEDIA_URL}}face/js/face.js"></script>
 {% endblock extra_headers %}
 
 {% block content %}
@@ -23,7 +23,7 @@
             <p>{{friend.name}}</p>
             <button dojoType="dijit.form.Button" type="button">Remove
             <script type="dojo/method" event="onClick" args="evt">
-            Face.removeExfriend({{friend.id}});
+            Face.removeExfriend({{friend.id}}, this.domNode);
             </script>
             </button>
         </div>

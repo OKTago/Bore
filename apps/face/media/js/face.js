@@ -8,7 +8,18 @@ dojo.addOnLoad(function() {
 });
 
 Face = {
-    removeExfriend: function(id) {
-        console.log(id);
+    removeExfriend: function(id, butt) {
+        dojo.xhrPost({
+            url: "delete/"+id+"/",
+            method: "POST",
+            handleAs: "text",
+            load: function(response) {
+                dnode = butt.parentNode;
+                anim = dojo.fadeOut({node:dnode});
+                var killdiv = function() { dojo.destroy(dnode); }
+                anim.onEnd = killdiv;
+                anim.play();
+            }
+        });
     }
 }
