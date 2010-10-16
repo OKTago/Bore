@@ -57,3 +57,5 @@ def index(request):
                            context_instance=RequestContext(request))
 
 
+def remove_exfriend(request, friend_id):
+    pass

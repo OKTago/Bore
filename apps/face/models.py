@@ -14,7 +14,7 @@ class UserSession(models.Model):
 
     def __unicode__(self):
        return self.last_name + " " + self.first_name 
-    
+
 class Friend(models.Model):
     user_id = models.CharField(max_length=255)
     friend_id = models.CharField(max_length=255)

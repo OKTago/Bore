@@ -11,10 +11,7 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-  #   (r'^$', 'apps.blog.views.index'),
-     (r'^$', 'apps.face.views.index'),
-  #  (r'^blog/', include('apps.blog.urls')),
-  #  (r'^comments/', include('django.contrib.comments.urls')),
+    (r'^$', include('apps.face.urls')),
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 )

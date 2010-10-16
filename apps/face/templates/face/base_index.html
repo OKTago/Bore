@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% load dojo %}
 
 {% block extra_headers %}
-    <link href="{{ MEDIA_URL }}face/css/face.css" rel="stylesheet" type="text/css" />
+    <link href="{{MEDIA_URL}}face/css/face.css" rel="stylesheet" type="text/css" />
+    {% dojo_include %}
+    <script type="text/javascript" src="{{MEDIA_URL}}/face/js/face.js"></script>
 {% endblock extra_headers %}
 
 {% block content %}
@@ -18,6 +21,11 @@
         <div class='exfriend'>
             <img src="http://graph.facebook.com/{{friend.id}}/picture" />
             <p>{{friend.name}}</p>
+            <button dojoType="dijit.form.Button" type="button">Remove
+            <script type="dojo/method" event="onClick" args="evt">
+            Face.removeExfriend({{friend.id}});
+            </script>
+            </button>
         </div>
     </li>
     {% endfor %}
