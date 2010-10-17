@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load dojo %}
+
+{% block extra_headers %}
+    <link href="{{MEDIA_URL}}face/css/face.css" rel="stylesheet" type="text/css" />
+    {% dojo_include %}
+{% endblock extra_headers %}
+
+{% block content %}
+<div id="face">
+<form method="post" action="">
+{% csrf_token %}
+{{form}}
+<input type="submit" name="invia" />
+</form>
+</div>
+{% endblock content %}
