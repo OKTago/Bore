@@ -8,21 +8,26 @@ from django.db.utils import DatabaseError
 class UserSession(models.Model):
     uid = models.IntegerField(unique=True)
     token = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     enabled = models.BooleanField()
 
     def __unicode__(self):
-       return self.last_name + " " + self.first_name 
+       return self.name 
 
 class Friend(models.Model):
     user_id = models.CharField(max_length=255)
     friend_id = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     deleted = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+       return self.name
     
     @staticmethod
     def get_nomore():
-        return Friend.objects.raw("SELECT * FROM face_friend WHERE friend_id NOT IN (SELECT friend_id FROM face_friendcompare)")
+        query = "SELECT * FROM face_friend WHERE friend_id NOT IN \
+                 (SELECT friend_id FROM face_friendcompare)"
+        return Friend.objects.raw(query)
 
 
 class FriendCompare(models.Model):
@@ -33,6 +38,8 @@ class FriendCompare(models.Model):
     def truncate():
         cursor = connection.cursor()
         try:
+            # mysql
             cursor.execute("TRUNCATE TABLE face_friendcompare")
         except DatabaseError:
+            # sqlite
             cursor.execute("DELETE FROM face_friendcompare")

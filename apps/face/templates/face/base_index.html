@@ -19,8 +19,8 @@
     {% for friend in deleted_friend %}
     <li>
         <div class='exfriend'>
-            <img src="http://graph.facebook.com/{{friend.id}}/picture" />
-            <p>{{friend.name}}</p>
+            <img src="http://graph.facebook.com/{{friend.friend_id}}/picture" />
+            <p><a href='http://www.facebook.com/profile.php?id={{friend.friend_id}}' target="_blank">{{friend.name}}</a></p>
             <button dojoType="dijit.form.Button" type="button">Remove
             <script type="dojo/method" event="onClick" args="evt">
             Face.removeExfriend({{friend.id}}, this.domNode);

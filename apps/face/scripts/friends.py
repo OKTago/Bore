@@ -38,7 +38,7 @@ for user in us:
             tmp.deleted=False
             f.save()
         except ObjectDoesNotExist:
-            f = Friend(user_id=user.uid, friend_id = friend['id'])
+            f = Friend(user_id=user.uid, friend_id = friend['id'], name = friend['name'])
             f.save()
 
 
