@@ -1,4 +1,4 @@
-WSGIScriptAlias / /home/ferama/mysite/django.wsgi
+WSGIScriptAlias /app /home/ferama/mysite/django.wsgi
 Alias /media/ /home/ferama/mysite/static_media/
 <Directory /home/ferama/mysite/static_media/>
     Options FollowSymLinks
