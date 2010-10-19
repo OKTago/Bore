@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS `meta_person` (
 
 2) ./manage.py shell
 
-3) p = Person()
+3) 
+   from meta.models import * 
+   p = Object()
    p.name = "marco"
    p.save()
 
