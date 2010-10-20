@@ -5,17 +5,30 @@ from django.db.utils import DatabaseError
 
 from django.contrib import admin
 
-def person_unicode(self): return self.name
+from meta.builder import *
+
 Object = type('Person', (models.Model,), {
     '__module__': 'meta.models', # deve corrispondere al path di import per questo file 
     'name': models.CharField(max_length=255),
-    '__unicode__': person_unicode,
+    '__unicode__': lambda self: eval("self."+"name"),
 })
 
 admin.site.register(Object)
 
-# TODO: cerca un modo per fare il syncdb in automatico
-#       Vedi django/core/management/commands/syncdb.py
+Tag = type('Tag', (models.Model,), {
+    '__module__': 'meta.models', # deve corrispondere al path di import per questo file 
+    'name': models.CharField(max_length=255),
+    '__unicode__': lambda self: eval("self."+"name"),
+})
+
+Document = type('Document', (models.Model,), {
+    '__module__': 'meta.models', # deve corrispondere al path di import per questo file 
+    'title': models.CharField(max_length=255),
+    'tags': models.ManyToManyField(Tag),
+    '__unicode__': lambda self: eval("self."+"title"),
+})
+
+sync_meta_models()
 
 # TODO: verificare se esiste una sorta di elenco di models.Fields
 #       in modo che nell'interfaccia di definizione del tipo

@@ -1,23 +1,30 @@
 from django.db import connection
 from django.core.management.color import no_style
 
+from django.db.models.loading import AppCache
 
-def sync_meta_model(models):
+APP_NAME = 'meta'
 
-    # nei modelli ci deve gia' essere Document_tag che non c'e' 
-    # verificare perche'
+
+def sync_meta_models():
+
+    ac = AppCache()
+    models = ac.app_models.get(APP_NAME).values()
+
     style = no_style()    
 
     cursor = connection.cursor()
 
     final_output = []
     tables = connection.introspection.table_names()
-    known_models = set([model for model in connection.introspection.installed_models(tables) if model not in models])
-    #print known_models
+    known_models = connection.introspection.installed_models(tables)
 
     pending_references = {}
    
     for model in models:
+        # se la tabella gia' esiste vai avanti
+        if model._meta.db_table in tables: continue
+
         output, references = connection.creation.sql_create_model(model, style, known_models)
         final_output.extend(output)
         for refto, refs in references.items():
@@ -39,10 +46,7 @@ def sync_meta_model(models):
         if alter_sql:
             final_output.append('-- The following references should be added but depend on non-existent tables:')
             final_output.extend(alter_sql)
-    
-    print u'\n'.join(final_output).encode('utf-8')
-
-def test():
-    from meta.models import *
-    models = [Tag, Document, Object]
-    sync_meta_model(models)
+   
+    if len(final_output) > 0: 
+        sql =  u'\n'.join(final_output).encode('utf-8')
+        cursor.execute(sql)
