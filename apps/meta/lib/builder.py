@@ -11,6 +11,8 @@ def sync_meta_models():
     """
     ac = AppCache()
     models = ac.app_models.get(APP_NAME).values()
+    # TODO: need a way to update AppCache on sync_meta_models
+    print models
 
     style = no_style()    
     cursor = connection.cursor()
