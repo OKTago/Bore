@@ -1,9 +1,8 @@
 {% extends "base.html" %}
-{% load dojo %}
 
 {% block extra_headers %}
     <link href="{{MEDIA_URL}}face/css/face.css" rel="stylesheet" type="text/css" />
-    {% dojo_include %}
+    {% include "dojo.html" %}
     <script type="text/javascript" src="{{MEDIA_URL}}face/js/face.js"></script>
 {% endblock extra_headers %}
 

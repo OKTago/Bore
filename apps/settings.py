@@ -100,8 +100,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    #'face',
-    'meta',
+    'face',
+    #'meta',
     #'dojo',
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
