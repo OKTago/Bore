@@ -5,7 +5,7 @@ from django.db.utils import DatabaseError
 
 from django.contrib import admin
 
-from meta.builder import *
+from meta.lib.builder import *
 
 class MetaMan:
     __metaClasses = {}

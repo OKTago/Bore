@@ -5,14 +5,14 @@ from django.db.models.loading import AppCache
 
 APP_NAME = 'meta'
 
-
 def sync_meta_models():
-
+    """
+    Sync dynamic objects with db creating tables if they doesn't exists
+    """
     ac = AppCache()
     models = ac.app_models.get(APP_NAME).values()
 
     style = no_style()    
-
     cursor = connection.cursor()
 
     final_output = []
@@ -50,3 +50,6 @@ def sync_meta_models():
     if len(final_output) > 0: 
         sql =  u'\n'.join(final_output).encode('utf-8')
         cursor.execute(sql)
+
+
+

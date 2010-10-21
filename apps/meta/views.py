@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
 from meta.models import *
-from meta.builder import *
+from meta.lib.builder import *
 
 def index(request):
     # non dovrebbe essere qui
