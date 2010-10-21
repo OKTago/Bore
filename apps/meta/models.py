@@ -17,15 +17,55 @@ class MetaMan:
     def removeModel(self, cls):
         pass
 
-    def getInstance(self, typeName):
+    def buildObject(self, typeName):
+        """
+        Return an instance of type name
+        Usage example:
+            o = metaMan.buildObject('Type1')
+            o.name = "test name"
+            o.save()
+        """
         cls = self.__metaClasses[typeName]
         obj = cls()
         return obj
 
     def getClass(self, typeName):
+        """
+        Return the type class.
+        Usage example:
+            t = metaMan.getClass('Type1')
+            t.objects.all()
+        """
         return self.__metaClasses[typeName]
 
 metaMan = MetaMan()
+
+
+class MetaType(models.Model):
+    name = models.CharField(max_length=255)
+    final = models.BooleanField()
+    abstract = models.BooleanField()
+
+    def __unicode__(self):
+        return self.name
+admin.site.register(MetaType)
+
+class TypeField(models.Model):
+    name = models.CharField(max_length=255)
+    metaType = models.ForeignKey(MetaType)
+    # TODO: manca un riferimento al tipo del campo (CharField, BooleanField etc)
+    #       Il tipo di campo va inserito in una tabella a parte e poi fatto un switch case sul risultato
+    #       Esempio:
+    #           basic_types
+    #            ---------------
+    #           id    |   name
+    #           1     |   String
+    #           2     |   Boolean
+    #
+    #           switch(type):
+    #               case String: return models.CharField()
+admin.site.register(TypeField)
+
 
 Object = type('Person', (models.Model,), {
     '__module__': 'meta.models', # deve corrispondere al path di import per questo file 

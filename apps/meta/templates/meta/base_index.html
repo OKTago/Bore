@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h2>{{name}} objects</h2>
+<ul>
+    {% for obj in objects %}
+    <li>{{obj}}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}
