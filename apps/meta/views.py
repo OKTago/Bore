@@ -13,10 +13,11 @@ def index(request):
     sync_meta_models()
 
 
-    t1 = metaMan.getClass('Type1')
+    #t1 = metaMan.getClass('Type1')
     data = {}
-    data['name'] = "Type1"
-    data['objects'] = t1.objects.all()
+    data['name'] = "MetaTypes"
+    #data['objects'] = t1.objects.all()
+    data['objects'] = MetaType.objects.all()
     return render_to_response('meta/base_index.html', data,
                                context_instance=RequestContext(request))
 

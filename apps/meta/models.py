@@ -6,6 +6,7 @@ from django.db.utils import DatabaseError
 from django.contrib import admin
 
 from meta.lib.builder import *
+from meta.lib.fields import Fields
 
 class MetaMan:
     __metaClasses = {}
@@ -48,25 +49,37 @@ class MetaType(models.Model):
 
     def __unicode__(self):
         return self.name
-admin.site.register(MetaType)
+
+FIELDS = Fields().get_set() 
 
 class TypeField(models.Model):
     name = models.CharField(max_length=255)
     metaType = models.ForeignKey(MetaType)
-    # TODO: manca un riferimento al tipo del campo (CharField, BooleanField etc)
-    #       Il tipo di campo va inserito in una tabella a parte e poi fatto un switch case sul risultato
-    #       Esempio:
-    #           basic_types
-    #            ---------------
-    #           id    |   name
-    #           1     |   String
-    #           2     |   Boolean
-    #
-    #           switch(type):
-    #               case String: return models.CharField()
-admin.site.register(TypeField)
+    field = models.CharField(max_length=50, choices=FIELDS)
 
+class TypeFieldInline(admin.TabularInline):
+    model = TypeField
 
+class MetaTypeAdmin(admin.ModelAdmin):
+    inlines = [
+        TypeFieldInline,
+    ]
+admin.site.register(MetaType, MetaTypeAdmin)
+
+metaTypes = MetaType.objects.all()
+for mtype in metaTypes:
+    fields = mtype.typefield_set.all()
+    dct = {
+        '__module__': 'meta.models'
+    }
+    for field in fields:
+        cls = Fields().get_class_by_name(field.field)()
+        dct[field.name] = cls
+    obj = type(str(mtype.name), (models.Model,), dct)
+    admin.site.register(obj)
+    metaMan.addModel(obj)
+
+"""
 Object = type('Person', (models.Model,), {
     '__module__': 'meta.models', # deve corrispondere al path di import per questo file 
     'name': models.CharField(max_length=255),
@@ -105,9 +118,7 @@ obj = type('TypeExt', (metaMan.getClass('Type0'),), {
 })
 admin.site.register(obj)
 
+"""
+
 sync_meta_models()
 
-
-# TODO: verificare se esiste una sorta di elenco di models.Fields
-#       in modo che nell'interfaccia di definizione del tipo
-#       si possa usare un drop-down con l'elenco
