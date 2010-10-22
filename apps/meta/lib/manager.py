@@ -54,6 +54,7 @@ class MetaMan:
             for field in fields:
                 cls = Fields().get_class_by_name(field.field)()
                 dct[field.name] = cls
+            # TODO: implement type inheritance
             obj = type(str(mtype.name), (models.Model,), dct)
             try:
                 admin.site.register(obj)

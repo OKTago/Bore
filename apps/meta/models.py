@@ -32,6 +32,13 @@ class TypeField(models.Model):
     class Meta:
         db_table = "meta_TYPEFIELD"
 
+class FieldProperty(models.Model):
+    name = models.CharField(max_length=50)
+    value = models.CharField(max_length=50)
+    typeField = models.ForeignKey(TypeField)
+    class Meta:
+        db_table = "meta_FIELDPROPERTY"
+
 class TypeFieldInline(admin.TabularInline):
     model = TypeField
 
