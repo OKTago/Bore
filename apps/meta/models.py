@@ -5,42 +5,11 @@ from django.db.utils import DatabaseError
 
 from django.contrib import admin
 
-from meta.lib.builder import *
+from meta.lib.manager import MetaMan
 from meta.lib.fields import Fields
 
-class MetaMan:
-    __metaClasses = {}
-
-    def addModel(self, cls):
-        objName = cls._meta.object_name 
-        self.__metaClasses[objName] = cls
-
-    def removeModel(self, cls):
-        pass
-
-    def buildObject(self, typeName):
-        """
-        Return an instance of type name
-        Usage example:
-            o = metaMan.buildObject('Type1')
-            o.name = "test name"
-            o.save()
-        """
-        cls = self.__metaClasses[typeName]
-        obj = cls()
-        return obj
-
-    def getClass(self, typeName):
-        """
-        Return the type class.
-        Usage example:
-            t = metaMan.getClass('Type1')
-            t.objects.all()
-        """
-        return self.__metaClasses[typeName]
 
 metaMan = MetaMan()
-
 
 class MetaType(models.Model):
     name = models.CharField(max_length=255)
@@ -66,7 +35,10 @@ class MetaTypeAdmin(admin.ModelAdmin):
     ]
 admin.site.register(MetaType, MetaTypeAdmin)
 
+
+# TODO: doesn't work if MetaType table doesn't exists (on first syncdb for example)
 metaTypes = MetaType.objects.all()
+"""
 for mtype in metaTypes:
     fields = mtype.typefield_set.all()
     dct = {
@@ -78,6 +50,8 @@ for mtype in metaTypes:
     obj = type(str(mtype.name), (models.Model,), dct)
     admin.site.register(obj)
     metaMan.addModel(obj)
+"""
+metaMan.buildClasses(metaTypes)
 
 """
 Object = type('Person', (models.Model,), {
@@ -120,5 +94,5 @@ admin.site.register(obj)
 
 """
 
-sync_meta_models()
+#sync_meta_models()
 
