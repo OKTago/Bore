@@ -1,5 +1,4 @@
 from django.db import connection
-from django.db.models.loading import AppCache
 from django.db import models
 from django.core.management.color import no_style
 
@@ -7,8 +6,6 @@ from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 
 from meta.lib.fields import Fields
-
-APP_NAME = 'meta'
 
 class MetaMan:
     __metaClasses = {} #static
@@ -71,9 +68,6 @@ class MetaMan:
         """
         Sync dynamic objects with db creating tables if they doesn't exists
         """
-       # ac = AppCache()
-       # models = ac.app_models.get(APP_NAME).values()
-
         models = self.getAllClasses()
         print models
         style = no_style()    

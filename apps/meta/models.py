@@ -19,12 +19,18 @@ class MetaType(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        db_table = "meta_METATYPE"
+
 FIELDS = Fields().get_set() 
 
 class TypeField(models.Model):
     name = models.CharField(max_length=255)
     metaType = models.ForeignKey(MetaType)
     field = models.CharField(max_length=50, choices=FIELDS)
+
+    class Meta:
+        db_table = "meta_TYPEFIELD"
 
 class TypeFieldInline(admin.TabularInline):
     model = TypeField
@@ -36,22 +42,13 @@ class MetaTypeAdmin(admin.ModelAdmin):
 admin.site.register(MetaType, MetaTypeAdmin)
 
 
-# TODO: doesn't work if MetaType table doesn't exists (on first syncdb for example)
-metaTypes = MetaType.objects.all()
-"""
-for mtype in metaTypes:
-    fields = mtype.typefield_set.all()
-    dct = {
-        '__module__': 'meta.models'
-    }
-    for field in fields:
-        cls = Fields().get_class_by_name(field.field)()
-        dct[field.name] = cls
-    obj = type(str(mtype.name), (models.Model,), dct)
-    admin.site.register(obj)
-    metaMan.addModel(obj)
-"""
-metaMan.buildClasses(metaTypes)
+try:
+    metaTypes = MetaType.objects.all()
+    metaMan.buildClasses(metaTypes)
+except DatabaseError:
+    # this should only happen on first syncdb
+    # when MetaMan table doesn't still exists
+    pass
 
 """
 Object = type('Person', (models.Model,), {
