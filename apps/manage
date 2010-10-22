@@ -1,0 +1,8 @@
+#! /bin/sh
+
+currentdir=`pwd`
+base=`dirname $currentdir`
+
+export PYTHONPATH=$base:$base/lib
+
+python manage.py $@
