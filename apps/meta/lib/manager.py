@@ -2,7 +2,9 @@ from django.db import connection
 from django.db.models.loading import AppCache
 from django.db import models
 from django.core.management.color import no_style
+
 from django.contrib import admin
+from django.contrib.admin.sites import AlreadyRegistered
 
 from meta.lib.fields import Fields
 
@@ -56,7 +58,10 @@ class MetaMan:
                 cls = Fields().get_class_by_name(field.field)()
                 dct[field.name] = cls
             obj = type(str(mtype.name), (models.Model,), dct)
-            admin.site.register(obj)
+            try:
+                admin.site.register(obj)
+            except AlreadyRegistered:
+                pass
             self.addModel(obj)
 
         self.syncModels()
