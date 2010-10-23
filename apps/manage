@@ -1,8 +1,8 @@
-#! /bin/sh
+# !/bin/sh
 
-currentdir=`pwd`
-base=`dirname $currentdir`
+SCRIPT_DIR=$(cd `dirname $0` && pwd)
+BASE=`dirname $SCRIPT_DIR`
 
-export PYTHONPATH=$base:$base/lib
+export PYTHONPATH=$BASE:$BASE/lib
 
 python manage.py $@

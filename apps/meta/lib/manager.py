@@ -46,15 +46,22 @@ class MetaMan:
         Build defined types classes and put them
         into meta.models module
         """
+        # TODO: implement type inheritance
         for mtype in mtypeObjects:
             fields = mtype.typefield_set.all()
             dct = {
                 '__module__': 'meta.models'
             }
             for field in fields:
-                cls = Fields().get_class_by_name(field.field)()
-                dct[field.name] = cls
-            # TODO: implement type inheritance
+                cls = Fields().get_class_by_name(field.field)
+                # TODO: remove me, implement property managment. 
+                if issubclass(cls, Fields().get_class_by_name('CharField')):
+                    obj = cls(max_length = 255)
+                if issubclass(cls, Fields().get_class_by_name('DecimalField')):
+                    obj = cls(max_digits = 20, decimal_places = 4)
+                else :
+                    obj = cls()
+                dct[field.name] = obj
             obj = type(str(mtype.name), (models.Model,), dct)
             try:
                 admin.site.register(obj)
