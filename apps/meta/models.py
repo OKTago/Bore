@@ -13,6 +13,7 @@ metaMan = MetaMan()
 
 class MetaType(models.Model):
     name = models.CharField(max_length=255)
+    name_plural = models.CharField(max_length=255) 
     final = models.BooleanField()
     abstract = models.BooleanField()
 
@@ -23,30 +24,48 @@ class MetaType(models.Model):
         db_table = "meta_METATYPE"
 
 FIELDS = Fields().get_set() 
-
-class TypeField(models.Model):
+class Field(models.Model):
     name = models.CharField(max_length=255)
     metaType = models.ForeignKey(MetaType)
-    field = models.CharField(max_length=50, choices=FIELDS)
+    ftype = models.CharField(max_length=50, choices=FIELDS)
+
+    def __unicode__(self):
+        return self.metaType.name + " > " + self.name
 
     class Meta:
         db_table = "meta_TYPEFIELD"
 
-class FieldProperty(models.Model):
-    name = models.CharField(max_length=50)
+PROPERTIES = Fields().get_available_properties()
+class Property(models.Model):
+    name = models.CharField(max_length=50, choices=PROPERTIES)
     value = models.CharField(max_length=50)
-    typeField = models.ForeignKey(TypeField)
+    field = models.ForeignKey(Field)
+    
+    def __unicode__(self):
+        return self.field.metaType.name + " > " + self.field.name + " > " + self.name
+
     class Meta:
         db_table = "meta_FIELDPROPERTY"
+        verbose_name_plural = "Properties"
 
-class TypeFieldInline(admin.TabularInline):
-    model = TypeField
+class FieldInline(admin.TabularInline):
+    model = Field
 
 class MetaTypeAdmin(admin.ModelAdmin):
     inlines = [
-        TypeFieldInline,
+        FieldInline,
     ]
 admin.site.register(MetaType, MetaTypeAdmin)
+
+class PropertyInline(admin.TabularInline):
+    model = Property
+
+class FieldAdmin(admin.ModelAdmin):
+    inlines = [
+        PropertyInline,
+    ] 
+admin.site.register(Field, FieldAdmin)
+
 
 
 try:

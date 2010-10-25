@@ -48,20 +48,44 @@ class MetaMan:
         """
         # TODO: implement type inheritance
         for mtype in mtypeObjects:
-            fields = mtype.typefield_set.all()
+            fields = mtype.field_set.all()
+
+            # __module__ param is required by the django model meta class
             dct = {
                 '__module__': 'meta.models'
             }
             for field in fields:
-                cls = Fields().get_class_by_name(field.field)
-                # TODO: remove me, implement property managment. 
-                if issubclass(cls, Fields().get_class_by_name('CharField')):
-                    obj = cls(max_length = 255)
-                if issubclass(cls, Fields().get_class_by_name('DecimalField')):
-                    obj = cls(max_digits = 20, decimal_places = 4)
-                else :
-                    obj = cls()
+                cls = Fields().get_class_by_name(field.ftype)
+                properties =  Fields.get_properties_assoc(field)
+                if len(properties) == 0:
+                    # TODO: Should never go here. We must always have needed params when build a field. 
+                    if issubclass(cls, Fields().get_class_by_name('CharField')): 
+                        obj = cls(max_length = 255)
+                    elif issubclass(cls, Fields().get_class_by_name('DecimalField')):
+                        obj = cls(max_digits = 20, decimal_places = 4)
+                    else:
+                        obj = cls()
+                else:
+                    #print properties
+                    # unpack properties
+                    obj = cls(**properties)
+                
                 dct[field.name] = obj
+           
+            if mtype.name_plural != "":
+                # define the django model Meta class
+                # class MyModel(models.Model):
+                #    myfield = models.IntegerField()
+                #    class Meta:
+                #       verbose_name_plural = "MyModels" 
+                #
+                # I use a Temp class here that is injected into
+                # type definition through the dict
+                class Temp:
+                    verbose_name_plural = mtype.name_plural
+                dct['Meta'] = Temp
+            
+            # define the new type
             obj = type(str(mtype.name), (models.Model,), dct)
             try:
                 admin.site.register(obj)
@@ -69,6 +93,7 @@ class MetaMan:
                 pass
             self.addModel(obj)
 
+        # create tables if not already exists
         self.syncModels()
 
 
@@ -77,7 +102,7 @@ class MetaMan:
         Sync dynamic objects with db creating tables if they doesn't exists
         """
         models = self.getAllClasses()
-        print models
+        #print "Meta models: " + str(models)
         style = no_style()    
         cursor = connection.cursor()
 
@@ -113,4 +138,5 @@ class MetaMan:
        
         if len(final_output) > 0: 
             sql =  u'\n'.join(final_output).encode('utf-8')
+            print sql
             cursor.execute(sql)

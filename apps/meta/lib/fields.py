@@ -19,6 +19,33 @@ class Fields:
 
     def get_class_by_name(self, name):
         return self.__fields[name]
+
+    def get_available_properties(self):
+        """
+        verbose_name=None, name=None, primary_key=False,
+                max_length=None, unique=False, blank=False, null=False,
+                db_index=False, rel=None, default=NOT_PROVIDED, editable=True,
+                serialize=True, unique_for_date=None, unique_for_month=None,
+                unique_for_year=None, choices=None, help_text='', db_column=None,
+                db_tablespace=None, auto_created=False, validators=[],
+                error_messages=None
+        """
+
+        ret = [
+            ("verbose_name", "verbose_name"),
+            ("max_length", "max_length"),
+            ("max_digits", "max_digits"),
+            ("decimal_places", "decimal_places"),
+        ]
+        return ret
+    
+    @staticmethod
+    def get_properties_assoc(field):
+        ret = {}
+        objects = field.property_set.all()
+        for obj in objects:
+            ret[obj.name] = obj.value
+        return ret
         
     def __discover(self):
         """
