@@ -5,3 +5,5 @@ not updated if you don't restart the server, so admin interface for example,
 doesn't work)
 
 UPDATE: Apache cause problems too :( 
+        I should try to build a middleware. It will be executed on
+        every request and must build object types
