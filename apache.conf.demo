@@ -1,7 +1,7 @@
-WSGIScriptAlias /app /home/ferama/mysite/django.wsgi
-Alias /media/ /home/ferama/mysite/static_media/
-<Directory /home/ferama/mysite/static_media/>
-    Options FollowSymLinks
+WSGIScriptAlias /app /home/ferama/fermeta/django.wsgi
+Alias /media/ /home/ferama/fermeta/static_media/
+<Directory /home/ferama/fermeta/static_media/>
+    Options FollowSymLinks Indexes
     Order deny,allow
     Allow from all
 </Directory>
