@@ -1,8 +1,5 @@
-Installare le django apps
-1) Settare la variabile di ambiente PYTHONPATH in modo che punti 
-   alla dir dove vogliamo installarle
-   Esempio:
-    export PYTHONPATH=$PYTHONPATH:~/mysite/lib:~/mysite
-2) Usare easy_install con l'opzione -d
-   Esempio:
-    easy_install -d /home/ferama/mysite/lib django-wikiapp
+Adding types at runtime doesn't work as well as with apache
+using django development server. If you are using the devel server
+youo must restart the server when you add a new type (it seems that urls are
+not updated if you don't restart the server, so admin interface for example,
+doesn't work)
