@@ -3,6 +3,8 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
+from meta.models import MetaType
+
 def index(request):
     #t1 = metaMan.getClass('Type1')
     data = {}
