@@ -1,3 +1,8 @@
+# daemon mode is required for meta objects to work well
+# In daemon mode we can easily reload code when a new meta 
+# type is defined.
+WSGIDaemonProcess site-1 user=ferama group=ferama threads=25
+WSGIProcessGroup site-1	
 WSGIScriptAlias /app /home/ferama/fermeta/django.wsgi
 Alias /media/ /home/ferama/fermeta/static_media/
 <Directory /home/ferama/fermeta/static_media/>
@@ -5,3 +10,4 @@ Alias /media/ /home/ferama/fermeta/static_media/
     Order deny,allow
     Allow from all
 </Directory>
+

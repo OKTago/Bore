@@ -8,14 +8,41 @@ from django.contrib import admin
 from meta.lib.manager import MetaMan
 from meta.lib.fields import Fields
 
-
 metaMan = MetaMan()
+
+class Reload(models.Model):
+    is_required = models.BooleanField()
+    @staticmethod
+    def schedule():
+        obj = Reload(id=1, is_required=True)
+        obj.save()
+    @staticmethod
+    def unschedule():
+        obj = Reload(id=1, is_required=False)
+        obj.save()
+    @staticmethod
+    def required():
+        try:
+            obj = Reload.objects.get(pk=1)
+        except Exception:
+            Reload.unschedule()
+            return False
+        return obj.is_required
+
+    class Meta:
+        db_table = "meta_RELOAD"
+
 
 class MetaType(models.Model):
     name = models.CharField(max_length=255)
     name_plural = models.CharField(max_length=255) 
     final = models.BooleanField()
     abstract = models.BooleanField()
+
+    def save(self, *args, **kwargs):
+        super(MetaType, self).save(*args, **kwargs)
+        # schedule objects rebuild
+        Reload.schedule()
 
     def __unicode__(self):
         return self.name
@@ -66,11 +93,8 @@ class FieldAdmin(admin.ModelAdmin):
     ] 
 admin.site.register(Field, FieldAdmin)
 
-
-
 try:
-    metaTypes = MetaType.objects.all()
-    metaMan.buildClasses(metaTypes)
+    metaMan.buildClasses(MetaType)
 except DatabaseError:
     # this should only happen on first syncdb
     # when MetaMan table doesn't still exists
@@ -116,6 +140,3 @@ obj = type('TypeExt', (metaMan.getClass('Type0'),), {
 admin.site.register(obj)
 
 """
-
-#sync_meta_models()
-

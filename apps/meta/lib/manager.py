@@ -41,11 +41,13 @@ class MetaMan:
         """
         return self.__metaClasses[typeName]
 
-    def buildClasses(self, mtypeObjects):
+#    def buildClasses(self, mtypeObjects):
+    def buildClasses(self, MetaTypeModel):
         """
         Build defined types classes and put them
         into meta.models module
         """
+        mtypeObjects = MetaTypeModel.objects.all()
         # TODO: implement type inheritance
         for mtype in mtypeObjects:
             fields = mtype.field_set.all()
