@@ -11,6 +11,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+WSGI_FILE = os.path.join(os.path.dirname(PWD),"django.wsgi")
+
 MANAGERS = ADMINS
 
 DATABASES = {

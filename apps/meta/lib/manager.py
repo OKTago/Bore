@@ -140,5 +140,5 @@ class MetaMan:
        
         if len(final_output) > 0: 
             sql =  u'\n'.join(final_output).encode('utf-8')
-            print sql
+            #print sql
             cursor.execute(sql)

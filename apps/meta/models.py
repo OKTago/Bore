@@ -11,15 +11,25 @@ from meta.lib.fields import Fields
 metaMan = MetaMan()
 
 class Reload(models.Model):
+    """
+    This model is intented to store only one tuple and
+    is used by middleware to reload source code when
+    new types are defined. 
+    MetaType model schedule a reload overriding models.Model save
+    method. The middleware execute the reload and unschedule it
+    """
     is_required = models.BooleanField()
+
     @staticmethod
     def schedule():
         obj = Reload(id=1, is_required=True)
         obj.save()
+
     @staticmethod
     def unschedule():
         obj = Reload(id=1, is_required=False)
         obj.save()
+
     @staticmethod
     def required():
         try:
