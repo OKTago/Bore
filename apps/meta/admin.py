@@ -4,17 +4,12 @@ from django.contrib import admin
 class FieldInline(admin.TabularInline):
     model = Field
 
-
-#def schedule_build(modeladmin, request, queryset):
-#    Reload.schedule()
-#schedule_build.short_description = "Sync Meta Types"
 class MetaTypeAdmin(admin.ModelAdmin):
-#    actions = [
-#        schedule_build
-#    ]
     inlines = [
         FieldInline,
     ]
+    list_display = ('name', 'syncready')
+    list_filter = ('syncready',)
 admin.site.register(MetaType, MetaTypeAdmin)
 
 class PropertyInline(admin.TabularInline):
@@ -24,4 +19,6 @@ class FieldAdmin(admin.ModelAdmin):
     inlines = [
         PropertyInline,
     ] 
+    list_display = ('name', 'ftype', 'metaType')
+    list_filter = ('metaType',)
 admin.site.register(Field, FieldAdmin)

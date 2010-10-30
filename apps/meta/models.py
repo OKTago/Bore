@@ -43,12 +43,15 @@ class MetaType(models.Model):
     final = models.BooleanField()
     abstract = models.BooleanField()
     syncready = models.BooleanField()
+    # http://docs.djangoproject.com/en/dev/ref/models/fields/
+    # search for ForeignKey
+    extend = models.ForeignKey('self', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super(MetaType, self).save(*args, **kwargs)
         # schedule objects rebuild
         Reload.schedule()
-
+    
     def __unicode__(self):
         return self.name
 

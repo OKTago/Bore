@@ -50,7 +50,6 @@ class MetaMan:
         """
         #mtypeObjects = MetaTypeModel.objects.all()
         mtypeObjects = MetaTypeModel.objects.filter(syncready=True)
-        # TODO: implement type inheritance
         for mtype in mtypeObjects:
             fields = mtype.field_set.all()
 
@@ -89,9 +88,19 @@ class MetaMan:
                 class Temp:
                     verbose_name_plural = mtype.name_plural
                 dct['Meta'] = Temp
-            
-            # define the new type
-            obj = type(str(mtype.name), (models.Model,), dct)
+            if mtype.extend is None: 
+                # define the new type
+                obj = type(str(mtype.name), (models.Model,), dct)
+            else:
+                cls = self.getClass(mtype.extend.name)
+                # TODO: cls could not exist here becouse it is not
+                #       built still.
+
+                # TODO: check for valid class names. It seems that
+                #       extending from objects with spaces into class
+                #       I have problems
+                obj = type(str(mtype.name), (cls,), dct)
+
             try:
                 admin.site.register(obj)
             except AlreadyRegistered:
