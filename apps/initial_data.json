@@ -1,0 +1,28 @@
+[
+  {
+    "pk": "0692ce49d038f902d82a076a27c664e6", 
+    "model": "sessions.session", 
+    "fields": {
+      "expire_date": "2010-11-13 11:46:34", 
+      "session_data": "gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUpZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5k\ncy5Nb2RlbEJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigEBdS4xMmI4NjExYzE0YjZiNTgyNTdm\nODk3MDliNTZiODIzYw==\n"
+    }
+  },
+  {
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+      "username": "root", 
+      "first_name": "", 
+      "last_name": "", 
+      "is_active": true, 
+      "is_superuser": true, 
+      "is_staff": true, 
+      "last_login": "2010-10-30 11:29:16", 
+      "groups": [], 
+      "user_permissions": [], 
+      "password": "sha1$903e0$ef93b69902dccce6c26779a156f26e8828c2b2d8", 
+      "email": "root@root.it", 
+      "date_joined": "2010-10-30 11:29:16"
+    }
+  }
+]

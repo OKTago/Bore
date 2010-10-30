@@ -46,6 +46,7 @@ class MetaMan:
         """
         Build defined types classes and put them
         into meta.models module
+        NOTE: For some reason we can't simply do a from meta.models import MetaType
         """
         mtypeObjects = MetaTypeModel.objects.all()
         # TODO: implement type inheritance
@@ -54,7 +55,7 @@ class MetaMan:
 
             # __module__ param is required by the django model meta class
             dct = {
-                '__module__': 'meta.models'
+                '__module__': 'mtype.models'
             }
             for field in fields:
                 cls = Fields().get_class_by_name(field.ftype)

@@ -39,10 +39,6 @@ class Reload(models.Model):
             return False
         return obj.is_required
 
-    class Meta:
-        db_table = "meta_RELOAD"
-
-
 class MetaType(models.Model):
     name = models.CharField(max_length=255)
     name_plural = models.CharField(max_length=255) 
@@ -57,8 +53,6 @@ class MetaType(models.Model):
     def __unicode__(self):
         return self.name
 
-    class Meta:
-        db_table = "meta_METATYPE"
 
 FIELDS = Fields().get_set() 
 class Field(models.Model):
@@ -69,8 +63,6 @@ class Field(models.Model):
     def __unicode__(self):
         return self.metaType.name + " > " + self.name
 
-    class Meta:
-        db_table = "meta_TYPEFIELD"
 
 PROPERTIES = Fields().get_available_properties()
 class Property(models.Model):
@@ -82,7 +74,6 @@ class Property(models.Model):
         return self.field.metaType.name + " > " + self.field.name + " > " + self.name
 
     class Meta:
-        db_table = "meta_FIELDPROPERTY"
         verbose_name_plural = "Properties"
 
 class FieldInline(admin.TabularInline):

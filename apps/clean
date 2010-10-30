@@ -1,0 +1,5 @@
+#! /bin/sh
+mysql -u root --password=root -e "drop database django; create database django;"
+
+./manage syncdb --noinput
+
