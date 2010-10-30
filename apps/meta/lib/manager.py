@@ -102,7 +102,26 @@ class MetaMan:
                 obj = type(str(mtype.name), (cls,), dct)
 
             try:
-                admin.site.register(obj)
+                lst =[]
+                i = 0
+                MAX_FIELDS = 5
+                father = mtype.extend
+                while father:
+                    inherited_fields = father.field_set.all()
+                    for field in inherited_fields:
+                        lst.append(field.name)
+                        i += 1
+                        if i == MAX_FIELDS: break
+                    father = father.extend
+                    #all_fields += inherited_fields
+                if i < MAX_FIELDS:
+                    for field in fields:
+                        lst.append(field.name)
+                        i += 1
+                        if i == MAX_FIELDS: break
+                class ObjAdmin(admin.ModelAdmin):
+                    list_display = lst 
+                admin.site.register(obj, ObjAdmin)
             except AlreadyRegistered:
                 pass
             self.addModel(obj)
