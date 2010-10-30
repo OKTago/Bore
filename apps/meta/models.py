@@ -3,8 +3,6 @@ from django.db import models
 from django.db import connection
 from django.db.utils import DatabaseError
 
-from django.contrib import admin
-
 from meta.lib.manager import MetaMan
 from meta.lib.fields import Fields
 
@@ -44,6 +42,7 @@ class MetaType(models.Model):
     name_plural = models.CharField(max_length=255) 
     final = models.BooleanField()
     abstract = models.BooleanField()
+    syncready = models.BooleanField()
 
     def save(self, *args, **kwargs):
         super(MetaType, self).save(*args, **kwargs)
@@ -75,24 +74,6 @@ class Property(models.Model):
 
     class Meta:
         verbose_name_plural = "Properties"
-
-class FieldInline(admin.TabularInline):
-    model = Field
-
-class MetaTypeAdmin(admin.ModelAdmin):
-    inlines = [
-        FieldInline,
-    ]
-admin.site.register(MetaType, MetaTypeAdmin)
-
-class PropertyInline(admin.TabularInline):
-    model = Property
-
-class FieldAdmin(admin.ModelAdmin):
-    inlines = [
-        PropertyInline,
-    ] 
-admin.site.register(Field, FieldAdmin)
 
 try:
     metaMan.buildClasses(MetaType)

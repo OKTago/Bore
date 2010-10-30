@@ -48,12 +48,14 @@ class MetaMan:
         into meta.models module
         NOTE: For some reason we can't simply do a from meta.models import MetaType
         """
-        mtypeObjects = MetaTypeModel.objects.all()
+        #mtypeObjects = MetaTypeModel.objects.all()
+        mtypeObjects = MetaTypeModel.objects.filter(syncready=True)
         # TODO: implement type inheritance
         for mtype in mtypeObjects:
             fields = mtype.field_set.all()
 
             # __module__ param is required by the django model meta class
+            # I put dynamic defined meta types into mtype app namespace
             dct = {
                 '__module__': 'mtype.models'
             }
