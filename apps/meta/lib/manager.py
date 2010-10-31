@@ -6,6 +6,9 @@ from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 
 from meta.lib.fields import Fields
+import mtype
+import inspect
+from mtype.cmodels import *
 
 class MetaMan:
     __metaClasses = {} #static
@@ -41,17 +44,28 @@ class MetaMan:
         """
         return self.__metaClasses[typeName]
 
-#    def buildClasses(self, mtypeObjects):
+    # NOTE: For some reason we can't simply do a from meta.models import MetaType
     def buildClasses(self, MetaTypeModel):
         """
         Build defined types classes and put them
-        into meta.models module
-        NOTE: For some reason we can't simply do a from meta.models import MetaType
+        into mtype.models module. It don't ovverride custom defined models
+        in mtype.cmodels module but take them instead and manage them building
+        needed tables and putting into mtype.models namespace. You can use them
+        in the same way as you do with user interface defined types.
         """
         #mtypeObjects = MetaTypeModel.objects.all()
         mtypeObjects = MetaTypeModel.objects.filter(syncready=True)
-        for mtype in mtypeObjects:
-            fields = mtype.field_set.all()
+        for metatype in mtypeObjects:
+            try:
+                # do not ovverride types defined into mtype app.
+                # eval here is probably a bit hackish but for now I don't 
+                # have a better solution
+                obj = eval(metatype.name)
+                self.addModel(obj)
+                continue
+            except NameError:
+                pass
+            fields = metatype.field_set.all()
 
             # __module__ param is required by the django model meta class
             # I put dynamic defined meta types into mtype app namespace
@@ -71,12 +85,11 @@ class MetaMan:
                         obj = cls()
                 else:
                     #print properties
-                    # unpack properties
-                    obj = cls(**properties)
+                    obj = cls(**properties) # unpack properties
                 
                 dct[field.name] = obj
            
-            if mtype.name_plural != "":
+            if metatype.name_plural != "":
                 # define the django model Meta class
                 # class MyModel(models.Model):
                 #    myfield = models.IntegerField()
@@ -86,26 +99,28 @@ class MetaMan:
                 # I use a Temp class here that is injected into
                 # type definition through the dict
                 class Temp:
-                    verbose_name_plural = mtype.name_plural
+                    verbose_name_plural = metatype.name_plural
                 dct['Meta'] = Temp
-            if mtype.extend is None: 
+            if metatype.extend is None: 
                 # define the new type
-                obj = type(str(mtype.name), (models.Model,), dct)
+                obj = type(str(metatype.name), (models.Model,), dct)
             else:
-                cls = self.getClass(mtype.extend.name)
+                cls = self.getClass(metatype.extend.name)
                 # TODO: cls could not exist here becouse it is not
                 #       built still.
 
                 # TODO: check for valid class names. It seems that
-                #       extending from objects with spaces into class
+                #       extending from objects with spaces into class name
                 #       I have problems
-                obj = type(str(mtype.name), (cls,), dct)
+                obj = type(str(metatype.name), (cls,), dct)
 
             try:
+                # build a more confortable admin site here inspecting
+                # for fields and adding them to Admin list_display
                 lst =[]
                 i = 0
                 MAX_FIELDS = 5
-                father = mtype.extend
+                father = metatype.extend
                 while father:
                     inherited_fields = father.field_set.all()
                     for field in inherited_fields:
@@ -125,6 +140,12 @@ class MetaMan:
             except AlreadyRegistered:
                 pass
             self.addModel(obj)
+       
+        # discover and register manual defined models 
+        for name in dir(mtype.cmodels):
+            obj = getattr(mtype.cmodels, name)
+            if inspect.isclass(obj):
+                self.addModel(obj)        
 
         # create tables if not already exists
         self.syncModels()
