@@ -11,6 +11,7 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+# need this to touch it on new type definition
 WSGI_FILE = os.path.join(os.path.dirname(PWD),"django.wsgi")
 
 MANAGERS = ADMINS

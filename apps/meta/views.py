@@ -12,3 +12,5 @@ def index(request):
     return render_to_response('meta/base_index.html', data,
                                context_instance=RequestContext(request))
 
+def meta(request, type_name):
+    return HttpResponse("meta: %s" % type_name)
