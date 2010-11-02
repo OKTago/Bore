@@ -8,11 +8,8 @@ Nothing is wrong with syncdb but I want MetaMan to have centralized
 control of types
 """
 
-# Create your models here.
-
-class Documento(models.Model):
-    titolo = models.CharField(max_length=255)
-    testo = models.TextField()
-
-    class Meta:
-        verbose_name_plural = "Documenti"
+# Sample model
+#
+#class Post(models.Model):
+#    title = models.CharField(max_length=255)
+#    text = models.TextField()
