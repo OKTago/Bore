@@ -3,8 +3,8 @@ from django.db import models
 from django.db import connection
 from django.db.utils import DatabaseError
 
-from meta.lib.manager import MetaMan
-from meta.lib.fields import Fields
+from meta.manager import MetaMan
+from meta.fields import Fields
 
 metaMan = MetaMan()
 
@@ -79,7 +79,7 @@ class Property(models.Model):
         verbose_name_plural = "Properties"
 
 try:
-    metaMan.buildClasses(MetaType)
+    metaMan.buildClasses()
 except DatabaseError:
     # this should only happen on first syncdb
     # when MetaMan table doesn't still exists

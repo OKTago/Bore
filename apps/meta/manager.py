@@ -5,7 +5,7 @@ from django.core.management.color import no_style
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 
-from meta.lib.fields import Fields
+from meta.fields import Fields
 import mtype
 import inspect
 from mtype.cmodels import *
@@ -44,8 +44,7 @@ class MetaMan:
         """
         return self.__metaClasses[typeName]
 
-    # NOTE: For some reason we can't simply do a from meta.models import MetaType
-    def buildClasses(self, MetaTypeModel):
+    def buildClasses(self):
         """
         Build defined types classes and put them
         into mtype.models module. It don't ovverride custom defined models
@@ -53,8 +52,10 @@ class MetaMan:
         needed tables and putting into mtype.models namespace. You can use them
         in the same way as you do with user interface defined types.
         """
+        # NOTE: trying to import MetaType on the top of the file doesn't work 
+        from meta.models import MetaType
         #mtypeObjects = MetaTypeModel.objects.all()
-        mtypeObjects = MetaTypeModel.objects.filter(syncready=True)
+        mtypeObjects = MetaType.objects.filter(syncready=True)
         for metatype in mtypeObjects:
             try:
                 # do not ovverride types defined into mtype app.
