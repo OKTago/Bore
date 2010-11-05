@@ -13,17 +13,17 @@ from mtype.cmodels import *
 class MetaMan:
     __metaClasses = {} #static
 
-    def addModel(self, cls):
+    def add_model(self, cls):
         objName = cls._meta.object_name 
         self.__metaClasses[objName] = cls
 
-    def removeModel(self, cls):
+    def remove_model(self, cls):
         pass
 
-    def getAllClasses(self):
+    def get_all_classes(self):
         return self.__metaClasses.values()
 
-    def buildObject(self, typeName):
+    def build_object(self, typeName):
         """
         Return an instance of type name
         Usage example:
@@ -35,7 +35,7 @@ class MetaMan:
         obj = cls()
         return obj
 
-    def getClass(self, typeName):
+    def get_class(self, typeName):
         """
         Return the type class.
         Usage example:
@@ -44,7 +44,7 @@ class MetaMan:
         """
         return self.__metaClasses[typeName]
 
-    def buildClasses(self):
+    def build_classes(self):
         """
         Build defined types classes and put them
         into mtype.models module. It don't ovverride custom defined models
@@ -62,7 +62,7 @@ class MetaMan:
                 # eval here is probably a bit hackish but for now I don't 
                 # have a better solution
                 obj = eval(metatype.name)
-                self.addModel(obj)
+                self.add_model(obj)
                 continue
             except NameError:
                 pass
@@ -106,7 +106,7 @@ class MetaMan:
                 # define the new type
                 obj = type(str(metatype.name), (models.Model,), dct)
             else:
-                cls = self.getClass(metatype.extend.name)
+                cls = self.get_class(metatype.extend.name)
                 # TODO: cls could not exist here becouse it is not
                 #       built still.
 
@@ -140,23 +140,23 @@ class MetaMan:
                 admin.site.register(obj, ObjAdmin)
             except AlreadyRegistered:
                 pass
-            self.addModel(obj)
+            self.add_model(obj)
        
         # discover and register manual defined models 
         for name in dir(mtype.cmodels):
             obj = getattr(mtype.cmodels, name)
             if inspect.isclass(obj):
-                self.addModel(obj)        
+                self.add_model(obj)        
 
         # create tables if not already exists
-        self.syncModels()
+        self.sync_models()
 
 
-    def syncModels(self):
+    def sync_models(self):
         """
         Sync dynamic objects with db creating tables if they doesn't exists
         """
-        models = self.getAllClasses()
+        models = self.get_all_classes()
         #print "Meta models: " + str(models)
         style = no_style()    
         cursor = connection.cursor()

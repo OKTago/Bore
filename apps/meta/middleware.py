@@ -6,7 +6,7 @@ class MetaObjectsMiddleware(object):
         if Reload.required():
             Reload.unschedule()
             metaMan = MetaMan()
-            metaMan.buildClasses()
+            metaMan.build_classes()
             # NOTE: works with apache and wsgi in daemon mode only
             #       http://code.google.com/p/modwsgi/wiki/ReloadingSourceCode
             

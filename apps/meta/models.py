@@ -79,7 +79,7 @@ class Property(models.Model):
         verbose_name_plural = "Properties"
 
 try:
-    metaMan.buildClasses()
+    metaMan.build_classes()
 except DatabaseError:
     # this should only happen on first syncdb
     # when MetaMan table doesn't still exists
