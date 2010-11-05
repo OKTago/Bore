@@ -1,11 +1,10 @@
 from meta.models import Reload
-from meta.manager import MetaMan
+from meta.manager import metaman 
 
 class MetaObjectsMiddleware(object):
     def process_request(self, request):
         if Reload.required():
             Reload.unschedule()
-            metaMan = MetaMan()
             metaMan.build_classes()
             # NOTE: works with apache and wsgi in daemon mode only
             #       http://code.google.com/p/modwsgi/wiki/ReloadingSourceCode

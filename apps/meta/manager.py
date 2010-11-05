@@ -9,9 +9,12 @@ from meta.fields import Fields
 import mtype
 import inspect
 from mtype.cmodels import *
+from actions import Actions
 
 class MetaMan:
     __metaClasses = {} #static
+
+    __actionsObjects = {}
 
     def add_model(self, cls):
         objName = cls._meta.object_name 
@@ -114,6 +117,9 @@ class MetaMan:
                 #       extending from objects with spaces into class name
                 #       I have problems
                 obj = type(str(metatype.name), (cls,), dct)
+            
+            # build and register an action object
+            self.__actionsObjects[str(metatype.name)] = Actions(obj) 
 
             try:
                 # build a more confortable admin site here inspecting
@@ -150,6 +156,18 @@ class MetaMan:
 
         # create tables if not already exists
         self.sync_models()
+
+    def get_model_urls(self):
+        from django.conf.urls.defaults import patterns, url, include
+        urlpatterns = [] 
+        for name in self.__metaClasses.keys():
+            cls_url = name.lower()
+            actions = self.__actionsObjects[name]
+            urlpatterns += patterns('',
+                url(r'^%s/' % (cls_url), include(actions.urls))
+            )
+        return urlpatterns
+    urls = property(get_model_urls)
 
 
     def sync_models(self):
@@ -195,3 +213,5 @@ class MetaMan:
             sql =  u'\n'.join(final_output).encode('utf-8')
             #print sql
             cursor.execute(sql)
+
+metaman = MetaMan()
