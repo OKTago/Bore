@@ -3,5 +3,5 @@ from meta.manager import metaman
 
 urlpatterns = patterns('meta',
     (r'^$', 'views.index'),
-    (r'^meta/', include(metaman.urls)),
+    (r'^man/', include(metaman.urls)),
 )
