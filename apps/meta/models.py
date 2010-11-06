@@ -36,7 +36,7 @@ class Reload(models.Model):
         return obj.is_required
 
 class MetaType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     name_plural = models.CharField(max_length=255, blank=True) 
     final = models.BooleanField()
     abstract = models.BooleanField()

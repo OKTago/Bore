@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms.models import modelform_factory
 from django.core.urlresolvers import reverse
+from django.views.generic import list_detail
 
 """
 Action class for meta model.
@@ -15,13 +16,22 @@ class Actions:
         """
         Show all model objects
         """
-        return HttpResponse("index: %s" % self.model._meta)
+        obj_info = {
+            "queryset": self.model.objects.all(),
+            "template_name": "meta/obj_list.html",
+            "template_object_name" : "obj",
+            "extra_context" : {"view" : reverse(self.__url_name('index'))}
+        }
+        return list_detail.object_list(request, **obj_info)
 
     def details(self, request, objId):
         """
         Render a single object
         """
         obj = self.model.objects.get(pk=objId)
+        from meta.models import MetaType
+        mtype = MetaType.objects.get(name=self.model.__name__)
+        print mtype.field_set.all()
         return HttpResponse("details")
 
     def add(self, request):

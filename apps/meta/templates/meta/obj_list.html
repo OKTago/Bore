@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<ul>
+{% for obj in obj_list %}
+    <li><a href='{{view}}{{obj.id}}/'>{{obj}}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

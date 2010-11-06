@@ -73,8 +73,14 @@ class MetaMan:
 
             # __module__ param is required by the django model meta class
             # I put dynamic defined meta types into mtype app namespace
+            def mod_unicode(self):
+                string = ""
+                for f in self._meta.local_fields:
+                    string += "%s " % getattr(self, f.name)
+                return string
             dct = {
-                '__module__': 'mtype.models'
+                '__module__': 'mtype.models',
+                '__unicode__': mod_unicode 
             }
             for field in fields:
                 cls = Fields().get_class_by_name(field.ftype)
