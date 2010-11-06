@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table>
+{% for name,value in fields.items %}
+<tr>
+    <th>{{name}}:</th><td>{{value}}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

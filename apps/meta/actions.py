@@ -1,9 +1,17 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from django.forms.models import modelform_factory
 from django.core.urlresolvers import reverse
 from django.views.generic import list_detail
+
+def get_model_fields(model):
+    opts = model._meta
+    ret = []
+    for f in opts.fields + opts.many_to_many:
+        if f.formfield():
+            ret.append(f.name)
+
+    return ret
 
 """
 Action class for meta model.
@@ -18,7 +26,7 @@ class Actions:
         """
         obj_info = {
             "queryset": self.model.objects.all(),
-            "template_name": "meta/obj_list.html",
+            "template_name": "meta/list.html",
             "template_object_name" : "obj",
             "extra_context" : {"view" : reverse(self.__url_name('index'))}
         }
@@ -29,10 +37,20 @@ class Actions:
         Render a single object
         """
         obj = self.model.objects.get(pk=objId)
-        from meta.models import MetaType
-        mtype = MetaType.objects.get(name=self.model.__name__)
-        print mtype.field_set.all()
-        return HttpResponse("details")
+        from django.forms.models import fields_for_model
+        fields_names = get_model_fields(self.model)
+        fields = {}
+        context = {}
+        for f in fields_names:
+            value = getattr(obj, f)
+            fields[f] = value
+            # export fields directly to context for custom views
+            context[f] = value
+        context['fields'] = fields
+        return render_to_response([
+                            'meta/%s_details.html' % self.model.__name__.lower(),
+                            'meta/details.html'], 
+                            context, context_instance=RequestContext(request))
 
     def add(self, request):
         ModelForm = modelform_factory(self.model)
