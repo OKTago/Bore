@@ -6,7 +6,7 @@ from django.contrib.contenttypes import generic
 
 """
 In this file you can define a custom model that will be auto imported
-from meta manager class. Manger will create the needed tables also.
+from meta manager class. Manager will create the needed tables also.
 """
 
 class Relation(models.Model):
@@ -16,7 +16,7 @@ class Relation(models.Model):
 admin.site.register(Relation)
 
 class BaseType(models.Model):
-    relations = models.ManyToManyField(Relation)  
+#    relations = models.ManyToManyField(Relation)  
     class Meta:
         abstract = True
         app_label = "Objects"
