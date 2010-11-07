@@ -35,6 +35,7 @@ class Reload(models.Model):
             return False
         return obj.is_required
 
+
 class MetaType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     name_plural = models.CharField(max_length=255, blank=True) 

@@ -6,9 +6,10 @@ from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
 
 from meta.fields import Fields
-import mtype
 import inspect
-from mtype.cmodels import *
+
+import meta
+from meta.cmodels import *
 from actions import Actions
 
 class MetaMan:
@@ -19,6 +20,8 @@ class MetaMan:
     def add_model(self, cls):
         objName = cls._meta.object_name 
         self.__metaClasses[objName] = cls
+        # build and register an action object
+        self.__actionsObjects[str(objName)] = Actions(cls)
 
     def remove_model(self, cls):
         pass
@@ -79,7 +82,7 @@ class MetaMan:
                     string += "%s " % getattr(self, f.name)
                 return string
             dct = {
-                '__module__': 'mtype.models',
+                '__module__': 'meta.models',
                 '__unicode__': mod_unicode 
             }
             for field in fields:
@@ -110,10 +113,11 @@ class MetaMan:
                 # type definition through the dict
                 class Temp:
                     verbose_name_plural = metatype.name_plural
+                    app_label = "MType"
                 dct['Meta'] = Temp
             if metatype.extend is None: 
                 # define the new type
-                obj = type(str(metatype.name), (models.Model,), dct)
+                obj = type(str(metatype.name), (BaseType,), dct)
             else:
                 cls = self.get_class(metatype.extend.name)
                 # TODO: cls could not exist here becouse it is not
@@ -124,9 +128,6 @@ class MetaMan:
                 #       I have problems
                 obj = type(str(metatype.name), (cls,), dct)
             
-            # build and register an action object
-            self.__actionsObjects[str(metatype.name)] = Actions(obj) 
-
             try:
                 # build a more confortable admin site here inspecting
                 # for fields and adding them to Admin list_display
@@ -155,8 +156,8 @@ class MetaMan:
             self.add_model(obj)
        
         # discover and register manual defined models 
-        for name in dir(mtype.cmodels):
-            obj = getattr(mtype.cmodels, name)
+        for name in dir(meta.cmodels):
+            obj = getattr(meta.cmodels, name)
             if inspect.isclass(obj):
                 self.add_model(obj)        
 
@@ -193,6 +194,8 @@ class MetaMan:
         for model in models:
             # if the table for model already exists continue 
             if model._meta.db_table in tables: continue
+            # don't try do create tables for abstract models
+            if model._meta.abstract: continue
             output, references = connection.creation.sql_create_model(model, style, known_models)
             final_output.extend(output)
             for refto, refs in references.items():

@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
+from django.forms.models import modelform_factory
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.generic import list_detail
