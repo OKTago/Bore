@@ -1,11 +1,22 @@
 from django.db import models
 from django.contrib import admin
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 """
 In this file you can define a custom model that will be auto imported
 from meta manager class. Manger will create the needed tables also.
 """
 
+class Relation(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+admin.site.register(Relation)
+
 class BaseType(models.Model):
+    relations = models.ManyToManyField(Relation)  
     class Meta:
         abstract = True
         app_label = "Objects"

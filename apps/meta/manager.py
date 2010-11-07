@@ -10,7 +10,7 @@ import inspect
 
 import meta
 from meta.cmodels import *
-from actions import Actions
+from meta.actions import Actions
 
 class MetaMan:
     __metaClasses = {} #static
@@ -137,6 +137,7 @@ class MetaMan:
                         lst.append(field.name)
                         i += 1
                         if i == MAX_FIELDS: break
+
                 class ObjAdmin(admin.ModelAdmin):
                     list_display = lst 
                 admin.site.register(obj, ObjAdmin)
