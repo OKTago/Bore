@@ -8,7 +8,7 @@ from meta manager class. Manger will create the needed tables also.
 class BaseType(models.Model):
     class Meta:
         abstract = True
-        app_label = "MType"
+        app_label = "Objects"
  
 
 # Sample custom model

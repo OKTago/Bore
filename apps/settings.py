@@ -59,6 +59,14 @@ MEDIA_ROOT = os.path.dirname(PWD)+'/static_media'
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
+
+DBTEMPLATES_USE_CODEMIRROR = True
+DBTEMPLATES_MEDIA_PREFIX = '/media/dbtemplates/'
+
+# seems broken
+DBTEMPLATES_AUTO_POPULATE_CONTENT = False
+
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
@@ -71,6 +79,7 @@ SECRET_KEY = '-74-6p!1&je6ar$(9v(@y56l^geg-3jncgs70g6uhnmfjw7jvr'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'dbtemplates.loader.load_template_source',
 #     'django.template.loaders.eggs.Loader',
 )
 
@@ -105,6 +114,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'meta',
+    'dbtemplates',
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
 )

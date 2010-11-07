@@ -53,9 +53,9 @@ class MetaMan:
     def build_classes(self):
         """
         Build defined types classes and put them
-        into mtype.models module. It don't ovverride custom defined models
-        in mtype.cmodels module but take them instead and manage them building
-        needed tables and putting into mtype.models namespace. You can use them
+        into meta.models module. It don't ovverride custom defined models
+        in meta.cmodels module but take them instead and manage them building
+        needed tables and putting into meta.models namespace. You can use them
         in the same way as you do with user interface defined types.
         """
         # NOTE: trying to import MetaType on the top of the file doesn't work 
@@ -74,13 +74,12 @@ class MetaMan:
                 pass
             fields = metatype.field_set.all()
 
-            # __module__ param is required by the django model meta class
-            # I put dynamic defined meta types into mtype app namespace
             def mod_unicode(self):
                 string = ""
                 for f in self._meta.local_fields:
                     string += "%s " % getattr(self, f.name)
                 return string
+            # __module__ param is required by the django model meta class
             dct = {
                 '__module__': 'meta.models',
                 '__unicode__': mod_unicode 
@@ -102,19 +101,6 @@ class MetaMan:
                 
                 dct[field.name] = obj
            
-            if metatype.name_plural != "":
-                # define the django model Meta class
-                # class MyModel(models.Model):
-                #    myfield = models.IntegerField()
-                #    class Meta:
-                #       verbose_name_plural = "MyModels" 
-                #
-                # I use a Temp class here that is injected into
-                # type definition through the dict
-                class Temp:
-                    verbose_name_plural = metatype.name_plural
-                    app_label = "MType"
-                dct['Meta'] = Temp
             if metatype.extend is None: 
                 # define the new type
                 obj = type(str(metatype.name), (BaseType,), dct)
@@ -127,6 +113,9 @@ class MetaMan:
                 #       extending from objects with spaces into class name
                 #       I have problems
                 obj = type(str(metatype.name), (cls,), dct)
+
+            if metatype.name_plural != "":
+                obj._meta.verbose_name_plural = metatype.name_plural
             
             try:
                 # build a more confortable admin site here inspecting
