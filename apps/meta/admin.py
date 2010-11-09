@@ -1,6 +1,11 @@
 from meta.models import Field, MetaType, Property, Reload
 from django.contrib import admin
 
+from meta.models import Relation
+from django.contrib.contenttypes import generic
+
+admin.site.register(Relation)
+
 class FieldInline(admin.TabularInline):
     model = Field
 

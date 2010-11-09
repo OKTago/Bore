@@ -6,6 +6,9 @@ from django.db.utils import DatabaseError
 from meta.manager import metaman 
 from meta.fields import Fields
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 class Reload(models.Model):
     """
     This model is intented to store only one tuple and
@@ -76,6 +79,22 @@ class Property(models.Model):
 
     class Meta:
         verbose_name_plural = "Properties"
+
+class Relation(models.Model):
+    content_type_origin = models.ForeignKey(ContentType, related_name="rel_origin")
+    object_id_origin = models.PositiveIntegerField()
+    content_object_origin = generic.GenericForeignKey(ct_field='content_type_origin', fk_field='object_id_origin')
+
+ #   content_type_destination = models.ForeignKey(MetaType, related_name="rel_destination")
+    content_type_destination = models.ForeignKey(ContentType, related_name="rel_destination")
+    object_id_destination = models.PositiveIntegerField()
+    content_object_destination = generic.GenericForeignKey(ct_field='content_type_destination', fk_field='object_id_detination')
+
+class BaseType(models.Model):
+    class Meta:
+        abstract = True
+        app_label = "objects"
+
 
 try:
     metaman.build_classes()

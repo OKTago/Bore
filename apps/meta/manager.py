@@ -9,7 +9,6 @@ from meta.fields import Fields
 import inspect
 
 import meta
-from meta.cmodels import *
 from meta.actions import Actions
 
 class MetaMan:
@@ -53,25 +52,13 @@ class MetaMan:
     def build_classes(self):
         """
         Build defined types classes and put them
-        into meta.models module. It don't ovverride custom defined models
-        in meta.cmodels module but take them instead and manage them building
-        needed tables and putting into meta.models namespace. You can use them
-        in the same way as you do with user interface defined types.
+        into meta.models module.
         """
         # NOTE: trying to import MetaType on the top of the file doesn't work 
-        from meta.models import MetaType
+        from meta.models import MetaType, BaseType
         #mtypeObjects = MetaTypeModel.objects.all()
         mtypeObjects = MetaType.objects.filter(syncready=True)
         for metatype in mtypeObjects:
-            try:
-                # do not ovverride types defined into mtype app.
-                # eval here is probably a bit hackish but for now I don't 
-                # have a better solution
-                obj = eval(metatype.name)
-                self.add_model(obj)
-                continue
-            except NameError:
-                pass
             fields = metatype.field_set.all()
 
             def mod_unicode(self):
@@ -137,7 +124,7 @@ class MetaMan:
                         lst.append(field.name)
                         i += 1
                         if i == MAX_FIELDS: break
-
+                
                 class ObjAdmin(admin.ModelAdmin):
                     list_display = lst 
                 admin.site.register(obj, ObjAdmin)
@@ -145,12 +132,6 @@ class MetaMan:
                 pass
             self.add_model(obj)
        
-        # discover and register manual defined models 
-        for name in dir(meta.cmodels):
-            obj = getattr(meta.cmodels, name)
-            if inspect.isclass(obj):
-                self.add_model(obj)        
-
         # create tables if not already exists
         self.sync_models()
 
